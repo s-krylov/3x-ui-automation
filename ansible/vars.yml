@@ -1,0 +1,4 @@
+user_email: "{{ lookup('env', 'EMAIL_USER') }}"
+api_key: "{{ lookup('env', 'XUI_API_KEY') }}"
+git_repo_url: "https://github.com/s-krylov/3x-ui-automation.git"
+git_branch: "main"

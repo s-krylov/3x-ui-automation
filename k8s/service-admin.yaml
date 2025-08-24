@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: 3x-ui-admin
+  namespace: xui
+spec:
+  selector:
+    app: 3x-ui
+  type: NodePort
+  externalIPs:
+    - 127.0.0.1
+  ports:
+    - name: admin
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080

@@ -1,0 +1,60 @@
+---
+- name: Deploy 3x-ui to Kubernetes
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Clone Git repository with Kubernetes manifests
+      git:
+        repo: "{{ git_repo_url }}"
+        dest: "/usr/apps/3x-ui-automation"
+        version: "{{ git_branch }}"
+        force: yes
+
+    - name: Ensure namespace exists
+      k8s:
+        api_version: v1
+        kind: Namespace
+        name: xui
+        state: present
+
+    - name: Apply Kubernetes manifests
+      k8s:
+        state: present
+        src: "/usr/apps/3x-ui-automation/k8s/{{ item }}"
+      loop:
+        - deployment.yaml
+        - service-public.yaml
+        - service-admin.yaml
+        - pvc-db.yaml
+        - pvc-cert.yaml
+
+    - name: Wait for 3x-ui pod to be ready
+      shell: kubectl wait --for=condition=ready pod -l app=3x-ui -n xui --timeout=120s
+
+    - name: Create VLESS user via 3x-ui API
+      uri:
+        url: "http://127.0.0.1:30080/xui/api/v1/vless"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ api_key }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          remark: "user-created-by-api"
+          uuid: "{{ lookup('pipe', 'uuidgen') }}"
+          flow: "xtls-rprx-direct"
+          expiry_time: "0"
+          level: 0
+          alter_id: 0
+          email: "{{ user_email }}"
+      register: vless_result
+      retries: 20
+      delay: 5
+      until: vless_result.status == 200
+
+    - name: Show VLESS creation result
+      debug:
+        var: vless_result.json

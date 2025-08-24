@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 3x-ui
+  namespace: xui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: 3x-ui
+  template:
+    metadata:
+      labels:
+        app: 3x-ui
+    spec:
+      containers:
+        - name: 3x-ui
+          image: ghcr.io/mhsanaei/3x-ui:v2.3.10
+          ports:
+            - containerPort: 80
+            - containerPort: 8080
+          env:
+            - name: XRAY_VMESS_AEAD_FORCED
+              value: "false"
+            - name: XUI_ENABLE_FAIL2BAN
+              value: "true"
+            - name: XUI_PORT
+              value: "80"
+            - name: XUI_ADMIN_PORT
+              value: "8080"
+            - name: XUI_LOG_LEVEL
+              value: "none"
+            - name: XUI_ENABLE_TLS
+              value: "false"
+            - name: XUI_ENABLE_API
+              value: "true"
+            - name: XUI_DEFAULT_EMAIL
+              value: "{{ user_email }}"
+      volumes:
+        - name: x-ui-db
+          persistentVolumeClaim:
+            claimName: x-ui-db-pvc
+        - name: x-ui-cert
+          persistentVolumeClaim:
+            claimName: x-ui-cert-pvc
