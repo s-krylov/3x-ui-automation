@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: 3x-ui-admin
+  name: a3x-ui-admin
   namespace: xui
 spec:
   selector:
-    app: 3x-ui
+    app: a3x-ui
   type: NodePort
   externalIPs:
     - 127.0.0.1

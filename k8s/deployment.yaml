@@ -7,14 +7,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: 3x-ui
+      app: a3x-ui
   template:
     metadata:
       labels:
-        app: 3x-ui
+        app: a3x-ui
     spec:
       containers:
-        - name: 3x-ui
+        - name: a3x-ui
           image: ghcr.io/mhsanaei/3x-ui:v2.3.10
           ports:
             - containerPort: 80
