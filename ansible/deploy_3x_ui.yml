@@ -32,7 +32,7 @@
         - pvc-cert.yaml
 
     - name: Wait for 3x-ui pod to be ready
-      shell: kubectl wait --for=condition=ready pod -l app=3x-ui -n xui --timeout=120s
+      shell: kubectl wait --for=condition=ready pod -l app=a3x-ui -n xui --timeout=120s
 
     - name: Create VLESS user via 3x-ui API
       uri:
